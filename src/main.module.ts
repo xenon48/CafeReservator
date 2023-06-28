@@ -5,7 +5,7 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { AuthModule } from './auth/auth.module';
 
 
-const uriDB = 'mongodb+srv://admin:Nv1kGGUOIq5jFQCv@cluster0.trzgoig.mongodb.net/?retryWrites=true&w=majority'
+const uriDB = 'mongodb+srv://admin:Nv1kGGUOIq5jFQCv@cluster0.trzgoig.mongodb.net/test?retryWrites=true&w=majority'
 @Module({
   imports: [
     UserModule,

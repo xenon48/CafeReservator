@@ -15,7 +15,7 @@ export class AuthController {
     @ApiOperation({ summary: 'Аутентификация' })
     @ApiResponse({ status: 200, type: String })
     @ApiBody({ type: loginDto })
-    @Post('login')
+    @Post()
     async login(@Body() dto: loginDto) {
         return await this.authService.login(dto);
     }

@@ -15,7 +15,7 @@ export class AuthService {
     async login(dto: loginDto) {
         const user: User = await this.userService.findByLogin(dto.login)
         if (user.password === dto.password) {
-            return { token: this.jwtService.sign({ login: user.login }) }
+            return { token: await this.jwtService.signAsync({ login: user.login }) }
         }
         else throw new HttpException('Неверный логин/пароль', HttpStatus.UNAUTHORIZED)
     }
