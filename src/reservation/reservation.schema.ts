@@ -1,10 +1,14 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { ObjectId } from "mongodb";
 import { HydratedDocument } from "mongoose";
 
 export type ReservationDocument = HydratedDocument<Reservation>;
 
 @Schema()
 export class Reservation {
+
+    // @Prop()
+    // _id?: string;
 
     @Prop()
     name: string;
@@ -16,10 +20,16 @@ export class Reservation {
     phone: number;
 
     @Prop({ required: true })
-    dateStart: Date;
+    dateStart: string;
 
     @Prop()
-    dateEnd: Date;
+    dateEnd: string;
+
+    @Prop({ required: true })
+    dateCreate: string;
+
+    @Prop()
+    dateUpdate: string;
 }
 
 export const ReservationSchema = SchemaFactory.createForClass(Reservation);

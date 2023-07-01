@@ -13,10 +13,17 @@ export class AuthService {
 
 
     async login(dto: loginDto) {
-        const user: User = await this.userService.findByLogin(dto.login)
+        let user: User
+        try {
+            user = await this.userService.findByLogin(dto.login)
+        } catch (error) {
+            throw new HttpException(`Ошибка БД: ${error.message}`, 500);
+        }
+        if (!user) { throw new HttpException("Пользователь не найден", 400);
+         }
         if (user.password === dto.password) {
             return { token: await this.jwtService.signAsync({ login: user.login }) }
         }
-        else throw new HttpException('Неверный логин/пароль', HttpStatus.UNAUTHORIZED)
+        else throw new HttpException('Неверный пароль', 401)
     }
 }

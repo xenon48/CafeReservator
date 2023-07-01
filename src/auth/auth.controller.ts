@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpException, HttpStatus, Post } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { loginDto } from 'src/dto/login.dto';
 import { UserService } from 'src/user/user.service';
@@ -8,15 +8,19 @@ import { AuthService } from './auth.service';
 @Controller('auth')
 export class AuthController {
     constructor(
-        private userService: UserService,
         private authService: AuthService
     ) { }
 
     @ApiOperation({ summary: 'Аутентификация' })
-    @ApiResponse({ status: 200, type: String })
+    @ApiResponse({ status: 200, })
     @ApiBody({ type: loginDto })
+    @HttpCode(200)
     @Post()
     async login(@Body() dto: loginDto) {
-        return await this.authService.login(dto);
+        try {
+            return await this.authService.login(dto);
+        } catch (error) {
+            throw new HttpException(error.message, error.status)
+        }
     }
 }
