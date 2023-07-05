@@ -7,7 +7,7 @@ import { AuthGuard } from 'src/auth/auth.guard';
 
 @ApiTags('Reservations')
 @Controller('reservation')
-@UseGuards(AuthGuard)
+// @UseGuards(AuthGuard)
 export class ReservationController {
     constructor(
         private reservationService: ReservationService
@@ -21,10 +21,11 @@ export class ReservationController {
     async getAll(@Query('from') from: string, @Query('to') to: string) {
         try {
             const reservations = await this.reservationService.getAll(from, to);
-            const respArr = reservations.map(el => {
-                return new reservationDto(el)
-            })
-            return new responceDto(respArr)
+            // const respArr = reservations.map(el => {
+            //     return new reservationDto(el)
+            // })
+            // return new responceDto(respArr)
+            return reservations;
         } catch (error) {
             throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -36,8 +37,8 @@ export class ReservationController {
     @Post()
     async create(@Body() dto: createReservationDto) {
         try {
-            const resp = await this.reservationService.createOne(dto);
-            return new responceDto(new reservationDto(resp))
+            return await this.reservationService.createOne(dto);
+            // return new responceDto(new reservationDto(resp))
         } catch (error) {
             throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -50,16 +51,16 @@ export class ReservationController {
     @ApiQuery({ name: 'id', type: String, required: true })
     @Put()
     async update(@Query('id') id: string, @Body() dto: createReservationDto) {
-        let resp;
-        try {
-            resp = await this.reservationService.editOne(dto, id);
-        } catch (error) {
-            throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        if (resp) {
-            return new responceDto(new reservationDto(resp))
-        }
-        else { throw new HttpException('Объект не найден', HttpStatus.BAD_REQUEST); }
+        // let resp;
+        // try {
+        //     resp = await this.reservationService.editOne(dto, id);
+        // } catch (error) {
+        //     throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+        // }
+        // if (resp) {
+        //     return new responceDto(new reservationDto(resp))
+        // }
+        // else { throw new HttpException('Объект не найден', HttpStatus.BAD_REQUEST); }
     }
 
     @ApiOperation({ summary: 'Удалить бронь' })
@@ -67,15 +68,15 @@ export class ReservationController {
     @ApiQuery({ name: 'id', type: String, required: true })
     @Delete()
     async delete(@Query('id') id: string) {
-        let resp;
-        try {
-            resp = await this.reservationService.delete(id);
-        } catch (error) {
-            throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        if (resp) {
-            return `Бронь с ID: "${id}" удалена`
-        }
-        else { throw new HttpException('Объект не найден', HttpStatus.BAD_REQUEST); }
+        // let resp;
+        // try {
+        //     resp = await this.reservationService.delete(id);
+        // } catch (error) {
+        //     throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+        // }
+        // if (resp) {
+        //     return `Бронь с ID: "${id}" удалена`
+        // }
+        // else { throw new HttpException('Объект не найден', HttpStatus.BAD_REQUEST); }
     }
 }

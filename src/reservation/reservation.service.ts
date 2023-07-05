@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Reservation } from './reservation.schema';
-import { Model } from 'mongoose';
 import { createReservationDto, reservationDto } from 'src/dto/reservation.dto';
+import { Reservation } from './reservation.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 function generateEndTime(dateStart: Date) {
     const tempDate = new Date(dateStart);
@@ -13,25 +13,25 @@ function generateEndTime(dateStart: Date) {
 @Injectable()
 export class ReservationService {
     constructor(
-        @InjectModel(Reservation.name)
-        private reservationRepository: Model<Reservation>
+        @InjectRepository(Reservation)
+        private reservationRepository: Repository<Reservation>
     ) { }
 
     async getAll(from?: string, to?: string) {
         let searhOptins = null;
-        if (from) { searhOptins = { dateStart: { $gte: new Date(from) } } }
-        else if (to) { searhOptins = { dateStart: { $lte: new Date(to) } } }
-        else if (from && to) { searhOptins = { dateStart: { $gte: new Date(from), $lte: new Date(to) } } }
+        if (from) {  }
+        else if (to) {  }
+        else if (from && to) {  }
         try {
-            return await this.reservationRepository.find(searhOptins).exec();
+            return await this.reservationRepository.find();
         } catch (error) {
             throw new Error(`Ошибка получения данных: ${error.message}`);
         }
     }
 
-    async getOne(id) {
+    async getOne(id: number) {
         try {
-            return await this.reservationRepository.findById(id).exec();
+            return await this.reservationRepository.findOneBy({ id });
         } catch (error) {
             throw new Error(`Ошибка БД: ${error.message}`);
         }
@@ -39,11 +39,8 @@ export class ReservationService {
 
     async createOne(dto: createReservationDto) {
         try {
-            const currentDate = new Date()
             if (!dto.dateEnd) { dto.dateEnd = generateEndTime(dto.dateStart) };
-            const createdObj = new this.reservationRepository(dto);
-            createdObj.dateCreate = currentDate;
-            return await createdObj.save();
+            return await this.reservationRepository.save(dto);
         } catch (error) {
             throw new Error(`Ошибка БД: ${error.message}`);
         }
@@ -51,22 +48,13 @@ export class ReservationService {
 
     async editOne(dto: createReservationDto, id: string) {
         try {
-            let reservation = await this.reservationRepository.findById(id);
-            if (!reservation) { throw new Error('Объект не найден') }
-            let newReservation = {
-                // ...reservation,
-                ...dto,
-                dateUpdate: new Date()
-            }
-            // newReservation.dateStart = new Date(newReservation.dateStart)
-            if (!newReservation.dateEnd) { newReservation.dateEnd = generateEndTime(newReservation.dateStart) };
-            return await this.reservationRepository.findByIdAndUpdate(reservation._id, newReservation, { new: true });
+            
         } catch (error) {
             throw new Error(`Ошибка обновления данных: ${error.message}`);
         }
     }
 
     async delete(id: string) {
-        return await this.reservationRepository.findByIdAndDelete(id);
+        return await this.reservationRepository.delete(id);
     }
 }
