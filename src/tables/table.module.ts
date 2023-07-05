@@ -9,6 +9,7 @@ import { TableController } from './table.controller';
     TypeOrmModule.forFeature([Table]),
   ],
   controllers: [TableController],
-  providers: [TableService]
+  providers: [TableService],
+  exports: [TableService]
 })
 export class TableModule { }

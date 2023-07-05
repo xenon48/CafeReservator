@@ -1,6 +1,6 @@
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { ReservationService } from './reservation.service';
-import { ApiBody, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { createReservationDto, reservationDto } from 'src/dto/reservation.dto';
 import { responceDto } from 'src/dto/responce.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
@@ -10,7 +10,7 @@ import { AuthGuard } from 'src/auth/auth.guard';
 // @UseGuards(AuthGuard)
 export class ReservationController {
     constructor(
-        private reservationService: ReservationService
+        private reservationService: ReservationService,
     ) { }
 
     @ApiOperation({ summary: 'Получить все брони' })
@@ -21,13 +21,26 @@ export class ReservationController {
     async getAll(@Query('from') from: string, @Query('to') to: string) {
         try {
             const reservations = await this.reservationService.getAll(from, to);
-            // const respArr = reservations.map(el => {
-            //     return new reservationDto(el)
-            // })
-            // return new responceDto(respArr)
-            return reservations;
+            const respArr = reservations.map(el => {
+                return new reservationDto(el)
+            })
+            return respArr;
         } catch (error) {
             throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @ApiOperation({ summary: 'Получить одну бронь по ID' })
+    @ApiResponse({ status: 200, type: reservationDto })
+    @ApiParam({ name: 'id', type: Number, required: true })
+    @Delete(':id')
+    async getOne(@Param('id') id: number) {
+        try {
+            const reservation = await this.reservationService.getOne(id);
+            if (!reservation) { throw new HttpException(`Бронь с ID: '${id}' не найденa`, 400) }
+            return new reservationDto(reservation);
+        } catch (error) {
+            throw new HttpException(error.message, error.status || 500);
         }
     }
 
@@ -37,10 +50,10 @@ export class ReservationController {
     @Post()
     async create(@Body() dto: createReservationDto) {
         try {
-            return await this.reservationService.createOne(dto);
-            // return new responceDto(new reservationDto(resp))
+            const resp = await this.reservationService.createOne(dto);
+            return new reservationDto(await this.reservationService.getOne(resp.id));
         } catch (error) {
-            throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new HttpException(error.message, error.status || 500);
         }
 
     }
@@ -65,18 +78,16 @@ export class ReservationController {
 
     @ApiOperation({ summary: 'Удалить бронь' })
     @ApiResponse({ status: 200, type: String })
-    @ApiQuery({ name: 'id', type: String, required: true })
-    @Delete()
-    async delete(@Query('id') id: string) {
-        // let resp;
-        // try {
-        //     resp = await this.reservationService.delete(id);
-        // } catch (error) {
-        //     throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
-        // }
-        // if (resp) {
-        //     return `Бронь с ID: "${id}" удалена`
-        // }
-        // else { throw new HttpException('Объект не найден', HttpStatus.BAD_REQUEST); }
+    @ApiParam({ name: 'id', type: Number, required: true })
+    @Delete(':id')
+    async delete(@Param('id') id: number) {
+        try {
+            const reservation = await this.reservationService.getOne(id);
+            if (!reservation) { throw new HttpException(`Бронь с ID: '${id}' не найденa`, 400) }
+            await this.reservationService.delete(id);
+            return 'Успешно удалено'
+        } catch (error) {
+            throw new HttpException(`Ошибка при удалении: ${error.message}`, error.status || 500);
+        }
     }
 }

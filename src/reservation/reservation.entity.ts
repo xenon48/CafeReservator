@@ -1,10 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Entity, Column, PrimaryColumn } from 'typeorm';
+import { Table } from 'src/tables/table.entity';
+import { Entity, Column, PrimaryColumn, ManyToOne, JoinColumn, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('reservations')
 export class Reservation {
     @ApiProperty()
-    @PrimaryColumn()
+    @PrimaryGeneratedColumn()
     id: number;
 
     @ApiProperty()
@@ -16,8 +17,9 @@ export class Reservation {
     guestPhone: string;
 
     @ApiProperty()
-    @Column({ nullable: false })
-    tableId: number;
+    @ManyToOne(() => Table, table => table.reservations)
+    @JoinColumn({ name: 'tableId', referencedColumnName: 'id' })
+    table: Table;
 
     @ApiProperty()
     @Column({ nullable: false, default: true })
@@ -28,6 +30,6 @@ export class Reservation {
     dateStart: Date;
 
     @ApiProperty()
-    @Column({ nullable: true })
+    @Column({ nullable: false })
     dateEnd: Date;
 }

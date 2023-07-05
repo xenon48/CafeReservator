@@ -1,6 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import * as moment from 'moment-timezone'
 import { Reservation } from "src/reservation/reservation.entity";
+import { Table } from "src/tables/table.entity";
 
 enum configTimezones {
     timeZone = 'Europe/Moscow',
@@ -15,51 +16,39 @@ function formatTime (date: Date) {
 
 export class reservationDto {
     @ApiProperty()
-    id: string;
+    id: number;
     @ApiProperty()
-    name: string;
+    guestName: string;
     @ApiProperty()
-    table: number;
+    guestPhone: string;
     @ApiProperty()
-    phone: number;
+    table: Table;
+    @ApiProperty()
+    actice: boolean;
     @ApiProperty()
     dateStart: Date | string;
     @ApiProperty()
     dateEnd: Date | string;
-    @ApiProperty()
-    dateCreate: Date | string;
-    @ApiProperty()
-    dateUpdate: Date | string;
 
-    constructor(obj) {
-        this.id = obj._id;
-        this.name = obj.name;
+    constructor(obj: Reservation) {
+        this.id = obj.id;
+        this.guestName = obj.guestName;
+        this.guestPhone = obj.guestPhone;
         this.table = obj.table;
-        this.phone = obj.phone;
         this.dateStart = formatTime(obj.dateStart)
         this.dateEnd = formatTime(obj.dateEnd)
-        this.dateCreate = formatTime(obj.dateCreate)
-        this.dateUpdate = formatTime(obj.dateUpdate)
     }
 }
 
 export class createReservationDto {
     @ApiProperty()
-    name: string;
+    guestName: string;
     @ApiProperty()
-    table: number;
+    guestPhone: string;
     @ApiProperty()
-    phone: string;
+    tableId: number;
     @ApiProperty()
     dateStart: Date;
     @ApiProperty()
     dateEnd: Date;
-
-    constructor(obj: Reservation) {
-        this.name = obj.guestName;
-        this.table = obj.tableId;
-        this.phone = obj.guestPhone;
-        this.dateStart = obj.dateStart;
-        this.dateEnd = obj.dateEnd;
-    }
 }

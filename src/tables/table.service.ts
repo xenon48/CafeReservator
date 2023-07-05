@@ -13,4 +13,8 @@ export class TableService {
     async getAll() {
         return await this.tableRepository.find();
     }
+
+    async getOne(id: number) {
+        return await this.tableRepository.findOneBy({ id });
+    }
 }

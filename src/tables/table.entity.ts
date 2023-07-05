@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Entity, Column, PrimaryColumn } from 'typeorm';
+import { Reservation } from 'src/reservation/reservation.entity';
+import { Entity, Column, PrimaryColumn, OneToMany } from 'typeorm';
 
 @Entity('tables')
 export class Table {
@@ -10,4 +11,7 @@ export class Table {
     @ApiProperty()
     @Column({ nullable: false })
     size: number;
+
+    @OneToMany( () => Reservation, reservation => reservation.table )
+    reservations: Reservation[];
 }
