@@ -1,7 +1,6 @@
 import { Body, Controller, HttpCode, HttpException, HttpStatus, Post } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { loginDto } from 'src/dto/login.dto';
-import { UserService } from 'src/user/user.service';
 import { AuthService } from './auth.service';
 
 @ApiTags('Auth')
@@ -12,7 +11,7 @@ export class AuthController {
     ) { }
 
     @ApiOperation({ summary: 'Аутентификация' })
-    @ApiResponse({ status: 200, })
+    @ApiResponse({ status: 200, description: 'Токен' })
     @ApiBody({ type: loginDto })
     @HttpCode(200)
     @Post()

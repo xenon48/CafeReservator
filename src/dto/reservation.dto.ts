@@ -8,7 +8,7 @@ enum configTimezones {
     format = 'YYYY-MM-DDTHH:mm'
 }
 
-function formatTime (date: Date) {
+function formatTime(date: Date) {
     if (date) {
         return moment(date).tz(configTimezones.timeZone).format(configTimezones.format);
     } else { return null }
@@ -25,9 +25,9 @@ export class reservationDto {
     table: Table;
     @ApiProperty()
     actice: boolean;
-    @ApiProperty()
+    @ApiProperty({ type: Date })
     dateStart: Date | string;
-    @ApiProperty()
+    @ApiProperty({ type: Date })
     dateEnd: Date | string;
 
     constructor(obj: Reservation) {

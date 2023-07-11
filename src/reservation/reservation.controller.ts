@@ -15,8 +15,8 @@ export class ReservationController {
 
     @ApiOperation({ summary: 'Получить все брони' })
     @ApiResponse({ status: 200, type: [reservationDto]})
-    @ApiQuery({ name: 'from', description: 'Дата, левая граница', example: '2023-06-28T23:00:00' })
-    @ApiQuery({ name: 'to', description: 'Дата, правая граница', example: '2023-06-30T12:30:00' })
+    @ApiQuery({ name: 'from', description: 'Дата, левая граница', example: '2023-06-28T23:00' })
+    @ApiQuery({ name: 'to', description: 'Дата, правая граница', example: '2023-06-30T12:30' })
     @Get()
     async getAll(@Query('from') from: string, @Query('to') to: string) {
         try {

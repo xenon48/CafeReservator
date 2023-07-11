@@ -1,18 +1,19 @@
-import { Controller, Get, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Get, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { TableService } from './table.service';
+import { Table } from './table.entity';
 
 @ApiTags('Tables')
 @Controller('tables')
-// @UseGuards(AuthGuard)
+@UseGuards(AuthGuard)
 export class TableController {
     constructor(
         private tableService: TableService
     ) { }
 
     @ApiOperation({ summary: 'Получить все столы' })
-    @ApiResponse({ status: 200 })
+    @ApiResponse({ status: 200, type: Table, isArray: true })
     @Get()
     async getAll() {
         try {
