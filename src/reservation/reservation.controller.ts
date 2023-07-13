@@ -14,7 +14,7 @@ export class ReservationController {
     ) { }
 
     @ApiOperation({ summary: 'Получить все брони' })
-    @ApiResponse({ status: 200, type: [reservationDto]})
+    @ApiResponse({ status: 200, type: [reservationDto] })
     @ApiQuery({ name: 'from', description: 'Дата, левая граница', example: '2023-06-28T23:00' })
     @ApiQuery({ name: 'to', description: 'Дата, правая граница', example: '2023-06-30T12:30' })
     @Get()
@@ -45,13 +45,20 @@ export class ReservationController {
     }
 
     @ApiOperation({ summary: 'Создать бронь' })
-    @ApiResponse({ status: 201, type: reservationDto })
+    @ApiResponse({ status: 201, type: [reservationDto] })
+    @ApiQuery({ name: 'from', description: 'Дата, левая граница', example: '2023-06-28T23:00' })
+    @ApiQuery({ name: 'to', description: 'Дата, правая граница', example: '2023-06-30T12:30' })
     @ApiBody({ type: createReservationDto, required: true })
     @Post()
-    async create(@Body() dto: createReservationDto) {
+    async create(@Body() dto: createReservationDto, @Query('from') from: string, @Query('to') to: string) {
         try {
-            const resp = await this.reservationService.createOne(dto);
-            return new reservationDto(await this.reservationService.getOne(resp.id));
+            await this.reservationService.createOne(dto);
+            const reservations = await this.reservationService.getAll(from, to);
+            const respArr = reservations.map(el => {
+                return new reservationDto(el)
+            })
+            return respArr;
+            // return new reservationDto(await this.reservationService.getOne(resp.id));
         } catch (error) {
             throw new HttpException(error.message, error.status || 500);
         }
