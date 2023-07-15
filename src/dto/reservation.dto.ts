@@ -24,7 +24,7 @@ export class reservationDto {
     @ApiProperty()
     table: Table;
     @ApiProperty()
-    actice: boolean;
+    active: boolean;
     @ApiProperty({ type: Date })
     dateStart: Date | string;
     @ApiProperty({ type: Date })
@@ -35,6 +35,7 @@ export class reservationDto {
         this.guestName = obj.guestName;
         this.guestPhone = obj.guestPhone;
         this.table = obj.table;
+        this.active = obj.active;
         this.dateStart = formatTime(obj.dateStart)
         this.dateEnd = formatTime(obj.dateEnd)
     }
@@ -46,7 +47,7 @@ export class createReservationDto {
     @ApiProperty()
     guestPhone: string;
     @ApiProperty()
-    tableId: number;
+    table: number;
     @ApiProperty()
     dateStart: Date;
     @ApiProperty()
