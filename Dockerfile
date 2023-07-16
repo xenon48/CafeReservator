@@ -10,9 +10,6 @@ COPY package*.json ./
 # Копируем yarn lock в контейнер
 COPY yarn.lock ./
 
-# Устанавливаем yarn
-RUN npm install -g yarn
-
 # Устанавливаем зависимости
 RUN yarn install
 
