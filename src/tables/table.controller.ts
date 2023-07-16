@@ -2,7 +2,7 @@ import { Controller, Get, HttpException, HttpStatus, UseGuards } from '@nestjs/c
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { TableService } from './table.service';
-import { Table } from './table.entity';
+import { Table } from '../entities/table.entity';
 
 @ApiTags('Tables')
 @Controller('tables')

@@ -1,12 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Reservation } from 'src/reservation/reservation.entity';
+import { Reservation } from 'src/entities/reservation.entity';
 import { Entity, Column, PrimaryColumn, OneToMany } from 'typeorm';
 
 @Entity('tables')
 export class Table {
     @ApiProperty()
     @PrimaryColumn()
-    id: number;
+    id: string;
 
     @ApiProperty()
     @Column({ nullable: false })

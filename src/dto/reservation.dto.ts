@@ -1,7 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
 import * as moment from 'moment-timezone'
-import { Reservation } from "src/reservation/reservation.entity";
-import { Table } from "src/tables/table.entity";
+import { Reservation } from "src/entities/reservation.entity";
+import { Status } from "src/entities/status.entity";
+import { Table } from "src/entities/table.entity";
 
 enum configTimezones {
     timeZone = 'Europe/Moscow',
@@ -24,7 +25,9 @@ export class reservationDto {
     @ApiProperty()
     table: Table;
     @ApiProperty()
-    active: boolean;
+    persons: number;
+    @ApiProperty()
+    status: Status;
     @ApiProperty({ type: Date })
     dateStart: Date | string;
     @ApiProperty({ type: Date })
@@ -35,7 +38,8 @@ export class reservationDto {
         this.guestName = obj.guestName;
         this.guestPhone = obj.guestPhone;
         this.table = obj.table;
-        this.active = obj.active;
+        this.status = obj.status;
+        this.persons = obj.persons;
         this.dateStart = formatTime(obj.dateStart)
         this.dateEnd = formatTime(obj.dateEnd)
     }
@@ -47,9 +51,14 @@ export class createReservationDto {
     @ApiProperty()
     guestPhone: string;
     @ApiProperty()
-    table: number;
+    table: string;
+    @ApiProperty()
+    status: string;
+    @ApiProperty()
+    persons: number;
     @ApiProperty()
     dateStart: Date;
     @ApiProperty()
     dateEnd: Date;
+
 }

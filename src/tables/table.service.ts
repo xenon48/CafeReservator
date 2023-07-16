@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Table } from './table.entity';
+import { Table } from '../entities/table.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -14,7 +14,7 @@ export class TableService {
         return await this.tableRepository.find();
     }
 
-    async getOne(id: number) {
+    async getOne(id: string) {
         return await this.tableRepository.findOneBy({ id });
     }
 }

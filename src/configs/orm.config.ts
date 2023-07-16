@@ -1,8 +1,9 @@
 import { ConfigService } from "@nestjs/config";
 import { TypeOrmModuleOptions } from "@nestjs/typeorm";
-import { Reservation } from "src/reservation/reservation.entity";
-import { Table } from "src/tables/table.entity";
-import { User } from "src/user/user.entity";
+import { Reservation } from "src/entities/reservation.entity";
+import { Status } from "src/entities/status.entity";
+import { Table } from "src/entities/table.entity";
+import { User } from "src/entities/user.entity";
 
 export default (configService: ConfigService): TypeOrmModuleOptions => ({
   type: "postgres",
@@ -16,6 +17,7 @@ export default (configService: ConfigService): TypeOrmModuleOptions => ({
   entities: [
     User,
     Reservation,
-    Table
+    Table,
+    Status,
   ],
 });
