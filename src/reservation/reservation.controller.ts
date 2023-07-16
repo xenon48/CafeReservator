@@ -7,7 +7,7 @@ import { AuthGuard } from 'src/auth/auth.guard';
 
 @ApiTags('Reservations')
 @Controller('reservation')
-// @UseGuards(AuthGuard)
+@UseGuards(AuthGuard)
 export class ReservationController {
     constructor(
         private reservationService: ReservationService,
