@@ -7,8 +7,14 @@ WORKDIR /usr/src/app
 # Копируем package.json и package-lock.json в контейнер
 COPY package*.json ./
 
+# Копируем yarn lock в контейнер
+COPY yarn.lock ./
+
+# Устанавливаем yarn
+RUN npm install -g yarn
+
 # Устанавливаем зависимости
-RUN npm install --force
+RUN yarn install
 
 # Копируем все файлы проекта в контейнер
 COPY . .
@@ -17,4 +23,4 @@ COPY . .
 EXPOSE 5000
 
 # Команда для запуска приложения
-CMD [ "npm", "run", "start" ]
+CMD [ "yarn", "run", "start" ]
