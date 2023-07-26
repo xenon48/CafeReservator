@@ -90,16 +90,20 @@ export class ReservationController {
 
     @ApiOperation({ summary: 'Удалить бронь' })
     @ApiResponse({ status: 200, type: String })
+    @ApiQuery({ name: 'from', description: 'Дата, левая граница', example: '2023-06-28T23:00', required: false })
+    @ApiQuery({ name: 'to', description: 'Дата, правая граница', example: '2023-06-30T12:30', required: false })
     @ApiParam({ name: 'id', type: Number, required: true })
     @Delete(':id')
-    async delete(@Param('id') id: number) {
+    async delete(@Param('id') id: number, @Query('from') from: string, @Query('to') to: string) {
         try {
             const reservation = await this.reservationService.getOne(id);
             if (!reservation) { throw new HttpException(`Бронь с ID: '${id}' не найденa`, 400) }
             const resp = await this.reservationService.delete(id);
             if (resp.affected > 0) {
-                return 'Успешно удалено'
-            } else throw new HttpException(`Ошибка при удалении`, 500);
+                const reservations = await this.reservationService.getAll(from, to);
+                const respArr = reservations.map(el => new reservationDto(el));
+                return respArr;
+            } else throw new HttpException(`Ошибка при удалении`, 400);
 
         } catch (error) {
             throw new HttpException(`Ошибка при удалении: ${error.message}`, error.status || 500);
