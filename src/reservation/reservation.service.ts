@@ -29,7 +29,7 @@ export class ReservationService {
         else if (!from && to) { searhOptins = { dateStart: LessThanOrEqual(to) } }
         else if (from && to) { searhOptins = { dateStart: Between(from, to) } }
         try {
-            return await this.reservationRepository.find({ relations: ['table', 'status'], where: searhOptins, order: { dateStart: 'ASC'} });
+            return await this.reservationRepository.find({ relations: ['table', 'status'], where: searhOptins, order: { dateStart: 'ASC' } });
         } catch (error) {
             throw new Error(`Ошибка получения данных: ${error.message}`);
         }
@@ -49,21 +49,34 @@ export class ReservationService {
             if (!table) { throw new HttpException(`Стол с ID: '${dto.table}' не найден`, 400) }
             if (!dto.status) { dto.status = 'waiting' };
             if (!dto.dateEnd) { dto.dateEnd = generateEndTime(dto.dateStart) };
-            return await this.reservationRepository.save(dto);
+            return await this.save(dto);
         } catch (error) {
             throw new HttpException(`Ошибка БД: ${error.message}`, error.status || 500);
         }
     }
 
-    async editOne(dto: createReservationDto, id: string) {
+    async editOne(reservation: Reservation, dto: createReservationDto) {
         try {
-
+            let newReservation = {
+                ...reservation,
+                ...dto
+            }
+            if (dto.dateStart && !dto.dateEnd) { newReservation.dateEnd = generateEndTime(dto.dateStart) };
+            return await this.save(newReservation);
         } catch (error) {
             throw new Error(`Ошибка обновления данных: ${error.message}`);
         }
     }
 
-    async delete(id: number) {            
+    async delete(id: number) {
         return await this.reservationRepository.delete(id);
+    }
+
+    async save(dto) {
+        try {
+            await this.reservationRepository.save(dto);
+        } catch (error) {
+            throw new Error(`Ошибка сохранения данных: ${error.message}`);
+        }
     }
 }

@@ -33,7 +33,7 @@ export class ReservationController {
     @ApiOperation({ summary: 'Получить одну бронь по ID' })
     @ApiResponse({ status: 200, type: reservationDto })
     @ApiParam({ name: 'id', type: Number, required: true })
-    @Delete(':id')
+    @Get(':id')
     async getOne(@Param('id') id: number) {
         try {
             const reservation = await this.reservationService.getOne(id);
@@ -66,21 +66,26 @@ export class ReservationController {
     }
 
     @ApiOperation({ summary: 'Редактировать бронь' })
-    @ApiResponse({ status: 201, type: reservationDto })
+    @ApiResponse({ status: 201, type: [reservationDto] })
+    @ApiQuery({ name: 'from', description: 'Дата, левая граница', example: '2023-06-28T23:00', required: false })
+    @ApiQuery({ name: 'to', description: 'Дата, правая граница', example: '2023-06-30T12:30', required: false })
     @ApiBody({ type: createReservationDto, required: true })
-    @ApiQuery({ name: 'id', type: String, required: true })
-    @Put()
-    async update(@Query('id') id: string, @Body() dto: createReservationDto) {
-        // let resp;
-        // try {
-        //     resp = await this.reservationService.editOne(dto, id);
-        // } catch (error) {
-        //     throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
-        // }
-        // if (resp) {
-        //     return new responceDto(new reservationDto(resp))
-        // }
-        // else { throw new HttpException('Объект не найден', HttpStatus.BAD_REQUEST); }
+    @ApiParam({ name: 'id', type: String, required: true })
+    @Put(':id')
+    async update(@Param('id') id: number, @Body() dto: createReservationDto, @Query('from') from: string, @Query('to') to: string) {
+        try {
+            const oldReservation = await this.reservationService.getOne(id);
+            if (!oldReservation) throw new HttpException(`Бронь с ID: '${id}' не найденa`, 400);
+            await this.reservationService.editOne(oldReservation, dto);
+            const reservations = await this.reservationService.getAll(from, to);
+            const respArr = reservations.map(el => {
+                return new reservationDto(el)
+            })
+            return respArr;
+        } catch (error) {
+            throw new HttpException(error.message, error.status || 500);
+
+        }
     }
 
     @ApiOperation({ summary: 'Удалить бронь' })
@@ -91,8 +96,11 @@ export class ReservationController {
         try {
             const reservation = await this.reservationService.getOne(id);
             if (!reservation) { throw new HttpException(`Бронь с ID: '${id}' не найденa`, 400) }
-            await this.reservationService.delete(id);
-            return 'Успешно удалено'
+            const resp = await this.reservationService.delete(id);
+            if (resp.affected > 0) {
+                return 'Успешно удалено'
+            } else throw new HttpException(`Ошибка при удалении`, 500);
+
         } catch (error) {
             throw new HttpException(`Ошибка при удалении: ${error.message}`, error.status || 500);
         }

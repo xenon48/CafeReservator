@@ -60,5 +60,4 @@ export class createReservationDto {
     dateStart: Date;
     @ApiProperty()
     dateEnd: Date;
-
 }
