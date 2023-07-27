@@ -1,19 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
-import * as moment from 'moment-timezone'
 import { Reservation } from "src/entities/reservation.entity";
 import { Status } from "src/entities/status.entity";
 import { Table } from "src/entities/table.entity";
-
-enum configTimezones {
-    timeZone = 'Europe/Moscow',
-    format = 'YYYY-MM-DDTHH:mm'
-}
-
-function formatTime(date: Date) {
-    if (date) {
-        return moment(date).tz(configTimezones.timeZone).format(configTimezones.format);
-    } else { return null }
-}
+import { castToTimezone } from "src/utils/utils";
 
 export class reservationDto {
     @ApiProperty()
@@ -40,8 +29,8 @@ export class reservationDto {
         this.table = obj.table;
         this.status = obj.status;
         this.persons = obj.persons;
-        this.dateStart = formatTime(obj.dateStart)
-        this.dateEnd = formatTime(obj.dateEnd)
+        this.dateStart = castToTimezone(obj.dateStart)
+        this.dateEnd = castToTimezone(obj.dateEnd)
     }
 }
 
@@ -57,7 +46,7 @@ export class createReservationDto {
     @ApiProperty()
     persons: number;
     @ApiProperty()
-    dateStart: Date;
+    dateStart: string;
     @ApiProperty()
-    dateEnd: Date;
+    dateEnd: string;
 }

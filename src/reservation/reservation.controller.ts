@@ -2,7 +2,6 @@ import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, 
 import { ReservationService } from './reservation.service';
 import { ApiBody, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { createReservationDto, reservationDto } from 'src/dto/reservation.dto';
-import { responceDto } from 'src/dto/responce.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 
 @ApiTags('Reservations')
@@ -21,12 +20,10 @@ export class ReservationController {
     async getAll(@Query('from') from: string, @Query('to') to: string) {
         try {
             const reservations = await this.reservationService.getAll(from, to);
-            const respArr = reservations.map(el => {
-                return new reservationDto(el)
-            })
+            const respArr = reservations.map(el => new reservationDto(el))
             return respArr;
         } catch (error) {
-            throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new HttpException(error.message, 500);
         }
     }
 
@@ -54,9 +51,7 @@ export class ReservationController {
         try {
             await this.reservationService.createOne(dto);
             const reservations = await this.reservationService.getAll(from, to);
-            const respArr = reservations.map(el => {
-                return new reservationDto(el)
-            })
+            const respArr = reservations.map(el => new reservationDto(el))
             return respArr;
             // return new reservationDto(await this.reservationService.getOne(resp.id));
         } catch (error) {
@@ -78,9 +73,7 @@ export class ReservationController {
             if (!oldReservation) throw new HttpException(`Бронь с ID: '${id}' не найденa`, 400);
             await this.reservationService.editOne(oldReservation, dto);
             const reservations = await this.reservationService.getAll(from, to);
-            const respArr = reservations.map(el => {
-                return new reservationDto(el)
-            })
+            const respArr = reservations.map(el => new reservationDto(el));
             return respArr;
         } catch (error) {
             throw new HttpException(error.message, error.status || 500);
@@ -89,7 +82,7 @@ export class ReservationController {
     }
 
     @ApiOperation({ summary: 'Удалить бронь' })
-    @ApiResponse({ status: 200, type: String })
+    @ApiResponse({ status: 200, type: [reservationDto] })
     @ApiQuery({ name: 'from', description: 'Дата, левая граница', example: '2023-06-28T23:00', required: false })
     @ApiQuery({ name: 'to', description: 'Дата, правая граница', example: '2023-06-30T12:30', required: false })
     @ApiParam({ name: 'id', type: Number, required: true })

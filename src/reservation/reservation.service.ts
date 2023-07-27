@@ -2,15 +2,10 @@ import { HttpException, Injectable } from '@nestjs/common';
 import { createReservationDto, reservationDto } from 'src/dto/reservation.dto';
 import { Reservation } from '../entities/reservation.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Between, DeepPartial, LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
+import { Between, LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
 import { Table } from 'src/entities/table.entity';
 import { Status } from 'src/entities/status.entity';
-
-function generateEndTime(dateStart: Date) {
-    const tempDate = new Date(dateStart);
-    tempDate.setHours(tempDate.getHours() + 3);
-    return tempDate;
-}
+import { generateEndTime, setTimezone } from 'src/utils/utils';
 
 @Injectable()
 export class ReservationService {
@@ -48,7 +43,10 @@ export class ReservationService {
             const table = await this.tableRepository.exist(dto.table);
             if (!table) { throw new HttpException(`Стол с ID: '${dto.table}' не найден`, 400) }
             if (!dto.status) { dto.status = 'waiting' };
-            if (!dto.dateEnd) { dto.dateEnd = generateEndTime(dto.dateStart) };
+            dto.dateStart = setTimezone(dto.dateStart);
+            if (!dto.dateEnd) {
+                dto.dateEnd = generateEndTime(dto.dateStart)
+            } else dto.dateEnd = setTimezone(dto.dateEnd);
             return await this.save(dto);
         } catch (error) {
             throw new HttpException(`Ошибка БД: ${error.message}`, error.status || 500);
@@ -59,9 +57,12 @@ export class ReservationService {
         try {
             let newReservation = {
                 ...reservation,
-                ...dto
+                ...dto,
+                dateStart: setTimezone(dto.dateStart)
             }
-            if (dto.dateStart && !dto.dateEnd) { newReservation.dateEnd = generateEndTime(dto.dateStart) };
+            if (!dto.dateEnd) {
+                newReservation.dateEnd = generateEndTime(newReservation.dateStart)
+            } else newReservation.dateEnd = setTimezone(dto.dateEnd);
             return await this.save(newReservation);
         } catch (error) {
             throw new Error(`Ошибка обновления данных: ${error.message}`);
