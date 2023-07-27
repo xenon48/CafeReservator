@@ -14,8 +14,6 @@ export class ReservationService {
         private reservationRepository: Repository<Reservation>,
         @InjectRepository(Table)
         private tableRepository: Repository<Table>,
-        @InjectRepository(Status)
-        private statusRepository: Repository<Status>
     ) { }
 
     async getAll(from?: string, to?: string) {

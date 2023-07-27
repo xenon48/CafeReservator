@@ -6,6 +6,8 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
 
 import { TableModule } from "./tables/table.module";
+import { StatusController } from './status/status.controller';
+import { StatusModule } from './status/status.module';
 import dotenvConfig from "./configs/dotenv.config";
 import ormConfig from "./configs/orm.config";
 
@@ -21,8 +23,9 @@ import ormConfig from "./configs/orm.config";
       useFactory: ormConfig,
     }),
     ConfigModule.forRoot(dotenvConfig),
-    AuthModule
-]
+    AuthModule,
+    StatusModule
+  ]
 })
 export class MainModule {
 
