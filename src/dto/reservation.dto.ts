@@ -2,7 +2,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { Reservation } from "src/entities/reservation.entity";
 import { Status } from "src/entities/status.entity";
 import { Table } from "src/entities/table.entity";
-import { castToTimezone } from "src/utils/utils";
+import { formatTime } from "src/utils/utils";
 
 export class reservationDto {
     @ApiProperty()
@@ -29,8 +29,8 @@ export class reservationDto {
         this.table = obj.table;
         this.status = obj.status;
         this.persons = obj.persons;
-        this.dateStart = castToTimezone(obj.dateStart)
-        this.dateEnd = castToTimezone(obj.dateEnd)
+        this.dateStart = formatTime(obj.dateStart)
+        this.dateEnd = formatTime(obj.dateEnd)
     }
 }
 
