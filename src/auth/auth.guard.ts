@@ -15,7 +15,7 @@ export class AuthGuard implements CanActivate {
       const payload = await this.jwtService.verifyAsync(token);
       request['user'] = payload;
     } catch {
-      throw new HttpException('Токен не актуален', 401);
+      throw new HttpException('Сессия завершена', 423);
     };
     return true;
   }
