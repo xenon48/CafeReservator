@@ -21,6 +21,8 @@ export class reservationDto {
     dateStart: Date | string;
     @ApiProperty({ type: Date })
     dateEnd: Date | string;
+    @ApiProperty()
+    createdBy: string;
 
     constructor(obj: Reservation) {
         this.id = obj.id;
@@ -29,6 +31,7 @@ export class reservationDto {
         this.table = obj.table;
         this.status = obj.status;
         this.persons = obj.persons;
+        this.createdBy = obj.createdBy;
         this.dateStart = formatTime(obj.dateStart)
         this.dateEnd = formatTime(obj.dateEnd)
     }

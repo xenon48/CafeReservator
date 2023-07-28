@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
 import { ReservationService } from './reservation.service';
 import { ApiBody, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { createReservationDto, reservationDto } from 'src/dto/reservation.dto';
@@ -47,9 +47,10 @@ export class ReservationController {
     @ApiQuery({ name: 'to', description: 'Дата, правая граница', example: '2023-06-30T12:30', required: false })
     @ApiBody({ type: createReservationDto, required: true })
     @Post()
-    async create(@Body() dto: createReservationDto, @Query('from') from: string, @Query('to') to: string) {
+    async create(@Body() dto: createReservationDto, @Query('from') from: string, @Query('to') to: string, @Req() req) {
         try {
-            await this.reservationService.createOne(dto);
+            const body = {...dto, createdBy: req.user.login}
+            await this.reservationService.createOne(body);
             const reservations = await this.reservationService.getAll(from, to);
             const respArr = reservations.map(el => new reservationDto(el))
             return respArr;
@@ -67,11 +68,12 @@ export class ReservationController {
     @ApiBody({ type: createReservationDto, required: true })
     @ApiParam({ name: 'id', type: String, required: true })
     @Put(':id')
-    async update(@Param('id') id: number, @Body() dto: createReservationDto, @Query('from') from: string, @Query('to') to: string) {
+    async update(@Param('id') id: number, @Body() dto: createReservationDto, @Query('from') from: string, @Query('to') to: string, @Req() req) {
         try {
+            const body = {...dto, createdBy: req.user.login}
             const oldReservation = await this.reservationService.getOne(id);
             if (!oldReservation) throw new HttpException(`Бронь с ID: '${id}' не найденa`, 400);
-            await this.reservationService.editOne(oldReservation, dto);
+            await this.reservationService.editOne(oldReservation, body);
             const reservations = await this.reservationService.getAll(from, to);
             const respArr = reservations.map(el => new reservationDto(el));
             return respArr;

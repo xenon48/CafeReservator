@@ -38,4 +38,8 @@ export class Reservation {
     @ApiProperty()
     @Column({ nullable: false })
     dateEnd: Date;
+
+    @ApiProperty()
+    @Column({ nullable: false })
+    createdBy: string;
 }
