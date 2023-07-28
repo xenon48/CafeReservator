@@ -49,12 +49,10 @@ export class ReservationController {
     @Post()
     async create(@Body() dto: createReservationDto, @Query('from') from: string, @Query('to') to: string, @Req() req) {
         try {
+            if (dto.guestPhone.length !== 11) throw new HttpException('Длина номера телефона должна составлять 11 символов', 400)
             const body = {...dto, createdBy: req.user.login}
             await this.reservationService.createOne(body);
-            const reservations = await this.reservationService.getAll(from, to);
-            const respArr = reservations.map(el => new reservationDto(el))
-            return respArr;
-            // return new reservationDto(await this.reservationService.getOne(resp.id));
+            return await this.getAll(from, to);
         } catch (error) {
             throw new HttpException(error.message, error.status || 500);
         }
@@ -70,13 +68,12 @@ export class ReservationController {
     @Put(':id')
     async update(@Param('id') id: number, @Body() dto: createReservationDto, @Query('from') from: string, @Query('to') to: string, @Req() req) {
         try {
+            if (dto.guestPhone.length !== 11) throw new HttpException('Длина номера телефона должна составлять 11 символов', 400);
             const body = {...dto, createdBy: req.user.login}
             const oldReservation = await this.reservationService.getOne(id);
             if (!oldReservation) throw new HttpException(`Бронь с ID: '${id}' не найденa`, 400);
             await this.reservationService.editOne(oldReservation, body);
-            const reservations = await this.reservationService.getAll(from, to);
-            const respArr = reservations.map(el => new reservationDto(el));
-            return respArr;
+            return await this.getAll(from, to);
         } catch (error) {
             throw new HttpException(error.message, error.status || 500);
 

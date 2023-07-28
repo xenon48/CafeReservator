@@ -38,16 +38,14 @@ export class ReservationService {
 
     async createOne(dto) {
         try {
-            const table = await this.tableRepository.exist(dto.table);
-            if (!table) { throw new HttpException(`Стол с ID: '${dto.table}' не найден`, 400) }
-            if (!dto.status) { dto.status = 'waiting' };
+            if (!dto.status) dto.status = 'waiting';
             dto.dateStart = setTimezone(dto.dateStart);
             if (!dto.dateEnd) {
                 dto.dateEnd = generateEndTime(dto.dateStart)
             } else dto.dateEnd = setTimezone(dto.dateEnd);
             return await this.save(dto);
         } catch (error) {
-            throw new HttpException(`Ошибка БД: ${error.message}`, error.status || 500);
+            throw new Error(`Ошибка БД: ${error.message}`);
         }
     }
 

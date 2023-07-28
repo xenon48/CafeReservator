@@ -14,7 +14,7 @@ export class Reservation {
     guestName: string;
 
     @ApiProperty()
-    @Column({ nullable: false })
+    @Column({ nullable: false, length: 11 })
     guestPhone: string;
 
     @ApiProperty()
