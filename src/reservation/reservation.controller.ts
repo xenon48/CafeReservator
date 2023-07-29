@@ -50,7 +50,7 @@ export class ReservationController {
     async create(@Body() dto: createReservationDto, @Query('from') from: string, @Query('to') to: string, @Req() req) {
         try {
             if (dto.guestPhone.length !== 11) throw new HttpException('Длина номера телефона должна составлять 11 символов', 400)
-            const body = {...dto, createdBy: req.user.login}
+            const body = { ...dto, createdBy: req.user.login }
             await this.reservationService.createOne(body);
             return await this.getAll(from, to);
         } catch (error) {
@@ -68,11 +68,33 @@ export class ReservationController {
     @Put(':id')
     async update(@Param('id') id: number, @Body() dto: createReservationDto, @Query('from') from: string, @Query('to') to: string, @Req() req) {
         try {
-            if (dto.guestPhone.length !== 11) throw new HttpException('Длина номера телефона должна составлять 11 символов', 400);
-            const body = {...dto, createdBy: req.user.login}
+            if (dto.guestPhone) {
+                if (dto.guestPhone.length !== 11) throw new HttpException('Длина номера телефона должна составлять 11 символов', 400);
+            };
+            const body = { ...dto, createdBy: req.user.login }
             const oldReservation = await this.reservationService.getOne(id);
             if (!oldReservation) throw new HttpException(`Бронь с ID: '${id}' не найденa`, 400);
             await this.reservationService.editOne(oldReservation, body);
+            return await this.getAll(from, to);
+        } catch (error) {
+            throw new HttpException(error.message, error.status || 500);
+
+        }
+    }
+
+    @ApiOperation({ summary: 'Редактировать статус' })
+    @ApiResponse({ status: 201, type: [reservationDto] })
+    @ApiQuery({ name: 'from', description: 'Дата, левая граница', example: '2023-06-28T23:00', required: false })
+    @ApiQuery({ name: 'to', description: 'Дата, правая граница', example: '2023-06-30T12:30', required: false })
+    @ApiBody({ type: createReservationDto, required: true })
+    @ApiParam({ name: 'id', type: String, required: true })
+    @Put('status/:id')
+    async updateStatus(@Param('id') id: number, @Body() dto: createReservationDto, @Query('from') from: string, @Query('to') to: string) {
+        try {
+            const oldReservation = await this.reservationService.getOne(id);
+            if (!oldReservation) throw new HttpException(`Бронь с ID: '${id}' не найденa`, 400);
+            const newReservation = { ...oldReservation, ...dto }
+            await this.reservationService.save(newReservation);
             return await this.getAll(from, to);
         } catch (error) {
             throw new HttpException(error.message, error.status || 500);
