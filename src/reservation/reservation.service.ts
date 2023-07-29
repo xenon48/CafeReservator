@@ -1,8 +1,8 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { createReservationDto, reservationDto } from 'src/dto/reservation.dto';
 import { Reservation } from '../entities/reservation.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Between, LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
+import { Between, In, LessThan, LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
 import { Table } from 'src/entities/table.entity';
 import { Status } from 'src/entities/status.entity';
 import { generateEndTime, setTimezone } from 'src/utils/utils';
@@ -74,6 +74,21 @@ export class ReservationService {
             await this.reservationRepository.save(dto);
         } catch (error) {
             throw new Error(`Ошибка сохранения данных: ${error.message}`);
+        }
+    }
+
+    async deactivateByCron(date) {
+        const reservations = await this.reservationRepository.find({
+            where: { dateEnd: LessThan(date), status: { id: In(['started', 'waiting']) } },
+        });
+        if (reservations.length) {
+            for (const reservation of reservations) {
+                const editedReservation = {
+                    ...reservation,
+                    status: 'completed'
+                }
+                await this.save(editedReservation);
+            }
         }
     }
 }

@@ -11,6 +11,7 @@ import { Table } from 'src/entities/table.entity';
     TypeOrmModule.forFeature([Reservation, Table])
   ],
   controllers: [ReservationController],
-  providers: [ReservationService]
+  providers: [ReservationService],
+  exports: [ReservationService]
 })
 export class ReservationModule { }
