@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { createReservationDto, reservationDto } from 'src/dto/reservation.dto';
+import { createReservationDto } from 'src/dto/reservation.dto';
 import { Reservation } from '../entities/reservation.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Between, In, LessThan, LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
 import { Table } from 'src/entities/table.entity';
-import { Status } from 'src/entities/status.entity';
 import { generateEndTime, setTimezone } from 'src/utils/utils';
 
 @Injectable()
@@ -16,11 +15,12 @@ export class ReservationService {
         private tableRepository: Repository<Table>,
     ) { }
 
-    async getAll(from?: string, to?: string) {
+    async getAll(from?: string, to?: string, table?: string) {
         let searhOptins = null;
         if (from && !to) { searhOptins = { dateStart: MoreThanOrEqual(from) } }
         else if (!from && to) { searhOptins = { dateStart: LessThanOrEqual(to) } }
         else if (from && to) { searhOptins = { dateStart: Between(from, to) } }
+        if (table) searhOptins = { ...searhOptins, table: { id: table } }
         try {
             return await this.reservationRepository.find({ relations: ['table', 'status'], where: searhOptins, order: { dateStart: 'ASC' } });
         } catch (error) {

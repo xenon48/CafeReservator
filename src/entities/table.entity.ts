@@ -12,6 +12,10 @@ export class Table {
     @Column({ nullable: false })
     size: number;
 
+    @ApiProperty()
+    @Column({ nullable: false, default: true })
+    active: boolean;
+
     @OneToMany( () => Reservation, reservation => reservation.table )
     reservations: Reservation[];
 }
