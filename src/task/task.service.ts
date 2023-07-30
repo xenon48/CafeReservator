@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { ReservationService } from 'src/reservation/reservation.service';
-import { formatTime } from 'src/utils/utils';
+import { castToTimezone } from 'src/utils/utils';
 
 @Injectable()
 export class TasksService {
@@ -9,9 +9,10 @@ export class TasksService {
         private reservationsService: ReservationService
     ) { }
 
-    @Cron(CronExpression.EVERY_10_MINUTES)
+    @Cron(CronExpression.EVERY_5_MINUTES)
     handleCron() {
-        const thisDate = formatTime(new Date());
+        const thisDate = castToTimezone(new Date());
+        console.log(thisDate);
         this.reservationsService.deactivateByCron(thisDate);
     }
 }

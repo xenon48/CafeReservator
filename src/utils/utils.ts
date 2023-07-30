@@ -6,6 +6,12 @@ enum configTimezones {
     format = 'YYYY-MM-DDTHH:mm'
 }
 
+export function castToTimezone(date: Date | string) {
+    if (date) {
+        return moment(date).tz(configTimezones.timeZone).format(configTimezones.format);
+    } else { return null }
+}
+
 export function formatTime(date: Date | string) {
     if (date) {
         return moment(date).format(configTimezones.format);

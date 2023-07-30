@@ -7,7 +7,7 @@ import { TableModule } from "./tables/table.module";
 import { StatusModule } from './status/status.module';
 import dotenvConfig from "./configs/dotenv.config";
 import ormConfig from "./configs/orm.config";
-import { TaskModule } from "./tasks/task.module";
+import { TaskModule } from "./task/task.module";
 
 
 @Module({
