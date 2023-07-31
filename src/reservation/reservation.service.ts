@@ -11,18 +11,16 @@ export class ReservationService {
     constructor(
         @InjectRepository(Reservation)
         private reservationRepository: Repository<Reservation>,
-        @InjectRepository(Table)
-        private tableRepository: Repository<Table>,
     ) { }
 
     async getAll(from?: string, to?: string, table?: string) {
-        let searhOptins = null;
-        if (from && !to) { searhOptins = { dateStart: MoreThanOrEqual(from) } }
-        else if (!from && to) { searhOptins = { dateStart: LessThanOrEqual(to) } }
-        else if (from && to) { searhOptins = { dateStart: Between(from, to) } }
-        if (table) searhOptins = { ...searhOptins, table: { id: table } }
+        let whereOptions = null;
+        if (from && !to) { whereOptions = { dateStart: MoreThanOrEqual(from) } }
+        else if (!from && to) { whereOptions = { dateStart: LessThanOrEqual(to) } }
+        else if (from && to) { whereOptions = { dateStart: Between(from, to) } }
+        if (table) whereOptions = { ...whereOptions, table: { id: table } }
         try {
-            return await this.reservationRepository.find({ relations: ['table', 'status'], where: searhOptins, order: { dateStart: 'ASC' } });
+            return await this.reservationRepository.find({ relations: ['table', 'status'], where: whereOptions, order: { dateStart: 'ASC' } });
         } catch (error) {
             throw new Error(`Ошибка получения данных: ${error.message}`);
         }

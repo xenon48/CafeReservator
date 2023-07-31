@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, Param, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
 import { ReservationService } from './reservation.service';
 import { ApiBody, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { createReservationDto, reservationDto } from 'src/dto/reservation.dto';
@@ -22,6 +22,21 @@ export class ReservationController {
             const reservations = await this.reservationService.getAll(from, to);
             const respArr = reservations.map(el => new reservationDto(el))
             return respArr;
+        } catch (error) {
+            throw new HttpException(error.message, 500);
+        }
+    }
+
+    @ApiOperation({ summary: 'Получить все брони для одного стола' })
+    @ApiResponse({ status: 200, type: [reservationDto] })
+    @ApiQuery({ name: 'from', description: 'Дата, левая граница', example: '2023-06-28T23:00', required: false })
+    @ApiQuery({ name: 'to', description: 'Дата, правая граница', example: '2023-06-30T12:30', required: false })
+    @ApiParam({ name: 'id', description: 'ID стола', type: String, required: true })
+    @Get('/table/:tableId')
+    async getAllOnTable(@Param('tableId') tableId: string, @Query('from') from: string, @Query('to') to: string) {
+        try {
+            const reservations = await this.reservationService.getAll(from, to, tableId?.toUpperCase());
+            return reservations.map(el => new reservationDto(el))
         } catch (error) {
             throw new HttpException(error.message, 500);
         }
