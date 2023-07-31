@@ -42,4 +42,8 @@ export class Reservation {
     @ApiProperty()
     @Column({ nullable: false })
     createdBy: string;
+
+    @ApiProperty()
+    @Column({ nullable: true })
+    text: string;
 }
