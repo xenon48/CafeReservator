@@ -2,7 +2,7 @@
 FROM node:17.9.1
 
 # Устанавливаем рабочую директорию внутри контейнера
-WORKDIR /usr/src/app
+WORKDIR /app
 
 # Копируем package.json и package-lock.json в контейнер
 COPY package*.json ./
@@ -18,6 +18,8 @@ COPY . .
 
 # Открываем порт, на котором будет работать приложение
 EXPOSE 5000
+#EXPOSE 9000
 
 # Команда для запуска приложения
-CMD [ "npm", "run", "start" ]
+CMD [ "npm", "run", "start:dev" ]
+# CMD [ "npm", "run", "start:prod" ]
