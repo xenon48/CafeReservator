@@ -4,7 +4,7 @@ import { Entity, Column, PrimaryGeneratedColumn, PrimaryColumn, UpdateDateColumn
 @Entity('users')
 export class User {
     @ApiProperty()
-    @PrimaryColumn()
+    @PrimaryGeneratedColumn()
     id: number;
 
     @ApiProperty()
@@ -12,7 +12,7 @@ export class User {
     name: string;
 
     @ApiProperty()
-    @Column({ nullable: false })
+    @Column({ nullable: false, unique: true })
     login: string;
 
     @ApiProperty()

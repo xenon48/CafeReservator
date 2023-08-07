@@ -12,16 +12,34 @@ export class UserService {
     ) { }
     
     async findByLogin(login: string) {
-        return await this.userRepository.findOneBy({ login });
+        try {
+            return await this.userRepository.findOneBy({ login });
+        } catch (error) {
+            throw new Error(`Ошибка БД: ${error.message}`);
+        }
+    }
+
+    async findById(id: number) {
+        try {
+            return await this.userRepository.findOneBy({ id });
+        } catch (error) {
+            throw new Error(`Ошибка БД: ${error.message}`);
+        }
     }
 
     async findAll() {
-        return await this.userRepository.find();
+        try {
+            return await this.userRepository.find();
+        } catch (error) {
+            throw new Error(`Ошибка БД: ${error.message}`);
+        }
     }
 
-    async createOne(dto: createUserDto) {
-        const newItem = this.userRepository.create(dto)
-        return await this.userRepository.save(newItem);
+    async save(body) {
+        try {
+            return await this.userRepository.save(body);
+        } catch (error) {
+            throw new Error(`Ошибка БД: ${error.message}`);
+        }
     }
-
 }

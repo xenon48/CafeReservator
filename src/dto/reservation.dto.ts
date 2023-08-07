@@ -55,4 +55,6 @@ export class createReservationDto {
     dateStart: string;
     @ApiProperty()
     dateEnd: string;
+    @ApiProperty()
+    text: string;
 }

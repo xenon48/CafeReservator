@@ -22,7 +22,7 @@ export class AuthService {
         if (!user) { throw new HttpException("Пользователь не найден", 400);
          }
         if (user.password === dto.password) {
-            return { token: await this.jwtService.signAsync({ login: user.login }) }
+            return { token: await this.jwtService.signAsync({ login: user.login, id: user.id }) }
         }
         else throw new HttpException('Неверный пароль', 401)
     }
