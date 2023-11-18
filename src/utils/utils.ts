@@ -26,6 +26,12 @@ export function setTimezone(date: Date | string) {
 
 export function generateEndTime(dateStart: Date | string) {
     if (dateStart) {
-        return moment(dateStart).add(3, 'hours').format(configTimezones.format);
+        return addHours(dateStart, 3);
+    } else { return null }
+}
+
+export function addHours(date: Date | string, shift: number) {
+    if (date) {
+        return moment(date).add(shift, 'hours').format(configTimezones.format);
     } else { return null }
 }

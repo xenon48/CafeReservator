@@ -97,7 +97,7 @@ export class ReservationController {
         }
     }
 
-    @ApiOperation({ summary: 'Редактировать статус' })
+    @ApiOperation({ summary: 'Редактировать статус или заметку' })
     @ApiResponse({ status: 201, type: [reservationDto] })
     @ApiQuery({ name: 'from', description: 'Дата, левая граница', example: '2023-06-28T23:00', required: false })
     @ApiQuery({ name: 'to', description: 'Дата, правая граница', example: '2023-06-30T12:30', required: false })
