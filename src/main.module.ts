@@ -8,6 +8,7 @@ import { StatusModule } from './status/status.module';
 import dotenvConfig from "./configs/dotenv.config";
 import ormConfig from "./configs/orm.config";
 import { TaskModule } from "./task/task.module";
+import { NotificationsModule } from './notifications/notifications.module';
 
 
 @Module({
@@ -17,6 +18,7 @@ import { TaskModule } from "./task/task.module";
     UserModule,
     TableModule,
     StatusModule,
+    NotificationsModule,
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
