@@ -1,5 +1,6 @@
 import { ConfigService } from "@nestjs/config";
 import { TypeOrmModuleOptions } from "@nestjs/typeorm";
+import { Request } from "src/entities/request.entity";
 import { Reservation } from "src/entities/reservation.entity";
 import { Status } from "src/entities/status.entity";
 import { Table } from "src/entities/table.entity";
@@ -19,5 +20,6 @@ export default (configService: ConfigService): TypeOrmModuleOptions => ({
     Reservation,
     Table,
     Status,
+    Request
   ],
 });

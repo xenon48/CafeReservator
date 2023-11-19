@@ -8,10 +8,12 @@ import { StatusModule } from './status/status.module';
 import dotenvConfig from "./configs/dotenv.config";
 import ormConfig from "./configs/orm.config";
 import { TaskModule } from "./task/task.module";
+import { RequestModule } from './request/request.module';
 
 
 @Module({
   imports: [
+    RequestModule,
     TaskModule,
     AuthModule,
     UserModule,
@@ -23,6 +25,7 @@ import { TaskModule } from "./task/task.module";
       useFactory: ormConfig,
     }),
     ConfigModule.forRoot(dotenvConfig),
+    RequestModule,
   ],
   providers: []
 })
