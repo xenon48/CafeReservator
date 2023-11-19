@@ -26,6 +26,14 @@ export class ReservationService {
         }
     }
 
+    async getAllActive() {
+        try {
+            return await this.reservationRepository.find({ relations: ['table', 'status'], where: { status: { id: In(['started', 'request', 'waiting']) } }, order: { dateStart: 'ASC' } });
+        } catch (error) {
+            throw new Error(`Ошибка получения данных: ${error.message}`);
+        }
+    }
+
     async getOne(id: number) {
         try {
             return await this.reservationRepository.findOne({ where: { id }, relations: ['table', 'status'] });
