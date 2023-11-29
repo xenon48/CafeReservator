@@ -3,9 +3,11 @@ import { RequestController } from './request.controller';
 import { RequestService } from './request.service';
 import { Request } from 'src/entities/request.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { TelegramBotModule } from 'src/telegram-bot/telegram-bot.module';
 
 @Module({
   imports: [
+    TelegramBotModule,
     TypeOrmModule.forFeature([Request])
   ],
   controllers: [RequestController],
