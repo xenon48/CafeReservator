@@ -7,7 +7,6 @@ import { Request } from 'src/entities/request.entity';
 
 @Controller('request')
 @ApiTags('Requests')
-@UseGuards(AuthGuard)
 export class RequestController {
     constructor(
         private requestService: RequestService
@@ -29,6 +28,7 @@ export class RequestController {
 
     @ApiOperation({ summary: 'Получить все заявки' })
     @ApiResponse({ status: 200, type: [RequestDto] })
+    @UseGuards(AuthGuard)
     // @ApiQuery({ name: 'from', description: 'Дата, левая граница', example: '2023-06-28T23:00', required: false })
     // @ApiQuery({ name: 'to', description: 'Дата, правая граница', example: '2023-06-30T12:30', required: false })
     @Get()
