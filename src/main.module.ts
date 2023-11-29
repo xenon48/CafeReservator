@@ -9,6 +9,7 @@ import dotenvConfig from "./configs/dotenv.config";
 import ormConfig from "./configs/orm.config";
 import { TaskModule } from "./task/task.module";
 import { RequestModule } from './request/request.module';
+import { TelegramBotModule } from './telegram-bot/telegram-bot.module';
 
 
 @Module({
@@ -19,13 +20,14 @@ import { RequestModule } from './request/request.module';
     UserModule,
     TableModule,
     StatusModule,
+    RequestModule,
+    TelegramBotModule,
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: ormConfig,
     }),
     ConfigModule.forRoot(dotenvConfig),
-    RequestModule,
   ],
   providers: []
 })

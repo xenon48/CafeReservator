@@ -4,12 +4,16 @@ import { AuthGuard } from 'src/auth/auth.guard';
 import { RequestService } from './request.service';
 import { CreateRequestDto, RequestDto } from 'src/dto/request.dto';
 import { Request } from 'src/entities/request.entity';
+import { TelegramBotService } from 'src/telegram-bot/telegram-bot.service';
+
+const TEMPLATE_FOR_TG: string = 'Новая заявка на бронь! ';
 
 @Controller('request')
 @ApiTags('Requests')
 export class RequestController {
     constructor(
-        private requestService: RequestService
+        private requestService: RequestService,
+        private telegramService: TelegramBotService
     ) { }
 
     @ApiOperation({ summary: 'Создать заявку' })
@@ -17,9 +21,11 @@ export class RequestController {
     @ApiBody({ type: CreateRequestDto, required: true })
     @Post()
     async create(@Body() dto: CreateRequestDto) {
+        if (dto.guestPhone?.length !== 11) throw new HttpException('Длина номера телефона должна составлять 11 символов', 400)
         try {
-            if (dto.guestPhone?.length !== 11) throw new HttpException('Длина номера телефона должна составлять 11 символов', 400)
             const savedRequest: Request = await this.requestService.create(dto);
+            const messageForTg = `${TEMPLATE_FOR_TG}\nИмя: ${savedRequest.guestName}\nТелефон: ${savedRequest.guestPhone}`;
+            await this.telegramService.sendMessageToTelegramChat(messageForTg);
             return new RequestDto(savedRequest);
         } catch (error) {
             throw new HttpException(error.message, error.status || 500);
