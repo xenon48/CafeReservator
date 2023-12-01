@@ -16,6 +16,8 @@ export class Table {
     @Column({ nullable: false, default: true })
     active: boolean;
 
+    free?: boolean;
+
     @OneToMany( () => Reservation, reservation => reservation.table )
     reservations: Reservation[];
 }

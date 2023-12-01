@@ -27,7 +27,7 @@ export class TableService {
         return await this.tableRepository.findOneBy({ id });
     }
 
-    async getFree(time: string, persons: number = 1): Promise<Table[]> {
+    async getFree(time: string): Promise<string[]> {
         const reservationsOnThisTime: Reservation[] = await this.reservationService.getAllActive();
         let reservedTablesIds: string[] = [];
         const estimatedStartTimeInSecs = +new Date(time);
@@ -38,12 +38,7 @@ export class TableService {
             if (estimatedEndTimeInSecs >= startTimeInSecs && estimatedStartTimeInSecs < endTimeInSecs) reservedTablesIds.push(reservation.table.id)
         })
         reservedTablesIds = [...new Set(reservedTablesIds)]; // убираем повторения
-        return await this.tableRepository.find({
-            where: {
-                id: Not(In(reservedTablesIds)),
-                size: MoreThanOrEqual(persons)
-            }
-        });
+        return reservedTablesIds;
     }
 
 }
