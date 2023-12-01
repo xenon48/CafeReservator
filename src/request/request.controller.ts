@@ -1,5 +1,5 @@
-import { Body, Controller, Get, HttpException, Param, Patch, Post, Put, UseGuards } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Get, HttpException, Param, Patch, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { ApiBody, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { RequestService } from './request.service';
 import { CreateRequestDto, RequestDto } from 'src/dto/request.dto';
@@ -35,12 +35,12 @@ export class RequestController {
     @ApiOperation({ summary: 'Получить все заявки' })
     @ApiResponse({ status: 200, type: [RequestDto] })
     @UseGuards(AuthGuard)
-    // @ApiQuery({ name: 'from', description: 'Дата, левая граница', example: '2023-06-28T23:00', required: false })
-    // @ApiQuery({ name: 'to', description: 'Дата, правая граница', example: '2023-06-30T12:30', required: false })
+    @ApiQuery({ name: 'from', description: 'Дата, левая граница', example: '2023-06-28T23:00', required: false })
+    @ApiQuery({ name: 'to', description: 'Дата, правая граница', example: '2023-06-30T12:30', required: false })
     @Get()
-    async getAll() {
+    async getAll(@Query('from') from: string, @Query('to') to: string) {
         try {
-            const requests = await this.requestService.getAll();
+            const requests = await this.requestService.getAll(from, to);
             const respArr = requests.map(el => new RequestDto(el));
             return respArr;
         } catch (error) {
