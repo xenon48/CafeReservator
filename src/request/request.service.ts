@@ -27,4 +27,8 @@ export class RequestService {
         })
     }
 
+    async update(body: Request): Promise<Request> {
+        return await this.requestRepository.save(body);
+    }
+
 }

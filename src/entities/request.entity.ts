@@ -21,6 +21,10 @@ export class Request {
     persons: number;
 
     @ApiProperty()
+    @Column({ nullable: false, default: true })
+    actual: boolean;
+
+    @ApiProperty()
     @Column({ nullable: false })
     dateStart: Date;
 

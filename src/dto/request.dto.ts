@@ -11,6 +11,8 @@ export class RequestDto {
     guestPhone: string;
     @ApiProperty()
     persons: number;
+    @ApiProperty()
+    actual: boolean;
     @ApiProperty({ type: Date })
     dateStart: Date | string;
     @ApiProperty({ type: Date })
@@ -23,6 +25,7 @@ export class RequestDto {
         this.guestName = obj.guestName;
         this.guestPhone = obj.guestPhone;
         this.persons = obj.persons;
+        this.actual = obj.actual;
         this.note = obj.note;
         this.dateStart = formatTime(obj.dateStart)
         this.dateCreate = formatTime(obj.dateCreate)

@@ -1,12 +1,12 @@
-import { Body, Controller, Get, HttpException, Post, UseGuards } from '@nestjs/common';
-import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Get, HttpException, Param, Patch, Post, Put, UseGuards } from '@nestjs/common';
+import { ApiBody, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { RequestService } from './request.service';
 import { CreateRequestDto, RequestDto } from 'src/dto/request.dto';
 import { Request } from 'src/entities/request.entity';
 import { TelegramBotService } from 'src/telegram-bot/telegram-bot.service';
 
-const TEMPLATE_FOR_TG: string = 'Новая заявка на бронь! ';
+const TEMPLATE_FOR_TG: string = 'НОВАЯ ЗАЯВКА НА БРОНЬ!\n';
 
 @Controller('request')
 @ApiTags('Requests')
@@ -31,7 +31,7 @@ export class RequestController {
             throw new HttpException(error.message, error.status || 500);
         }
     }
-
+    
     @ApiOperation({ summary: 'Получить все заявки' })
     @ApiResponse({ status: 200, type: [RequestDto] })
     @UseGuards(AuthGuard)
@@ -47,4 +47,21 @@ export class RequestController {
             throw new HttpException(error.message, 500);
         }
     }
+    
+        @ApiOperation({ summary: "Отметить заявку обработанной/актуальной" })
+        @ApiResponse({ status: 200, type: RequestDto })
+        @UseGuards(AuthGuard)
+        @ApiParam({ name: 'id', required: true})
+        @Patch('/change-actual/:id')
+        async chancgeActual(@Param('id') id: number) {
+            try {
+                const request = await this.requestService.getOne(id);
+                if (!request) throw new HttpException(`Заявка c ID '${id}' не найдена`, 400);
+                request.actual = request.actual ? false : true;
+                const savedRequest: Request = await this.requestService.update(request);
+                return new RequestDto(savedRequest);
+            } catch (error) {
+                throw new HttpException(error.message, error.status || 500);
+            }
+        }
 }
