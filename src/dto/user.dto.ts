@@ -38,4 +38,6 @@ export class createUserDto {
     readonly phone: string;
     @ApiProperty()
     readonly telegram: string;
+    @ApiProperty()
+    readonly fcm_token: string;
 }

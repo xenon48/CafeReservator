@@ -30,4 +30,8 @@ export class User {
     @ApiProperty()
     @Column({ nullable: true })
     phone: string;
+
+    @ApiProperty()
+    @Column({ nullable: true })
+    fcm_token: string;
 }
