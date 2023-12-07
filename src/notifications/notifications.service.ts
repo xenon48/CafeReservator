@@ -1,18 +1,29 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import * as Firebase from 'firebase-admin';
+import { UserService } from 'src/user/user.service';
+
+const TITLE: string = 'Новая заявка!';
+const BODY: string = 'Послупила новая заявка на столик!';
 
 @Injectable()
 export class NotificationsService {
-    constructor() {
-
+    constructor(
+        private userService: UserService
+    ) {
         // Initialize Firebase
         Firebase.initializeApp({ credential: Firebase.credential.cert('src/configs/firebase-adminsdk.json') });
-        const token = 'fuYyfYb0PMRqQ7dUUlI0bq:APA91bETbixONBM3mcNBYIsKiQHlWuSQipUAkAVGKEIf9m_st1AL_gIInyw-kOJstdS6UMeYq8plNADJKpd8HZ6p0bplfV0AFwJL2sh1F4bDpiPLp6svrkKxcQi9YKy-MNtcRAJP68kc'
-        this.sendPush(token, 'Test', 'Отправлено из бека на NestJS')
-
+        // this.sendPush(token, 'Test', 'Отправлено из бека на NestJS');
     }
 
-    async sendPush(token: string, title: string, body: string) {
+    async generateAndSendPushNewRequest(): Promise<void> {
+        const fcmTokens: string[] = await this.userService.findAllFcmTokens();
+        if (!fcmTokens.length) return null;
+        for (const token of fcmTokens) {
+            await this.sendPush(token, TITLE, BODY)
+        }
+    }
+
+    async sendPush(token: string, title: string, body: string): Promise<void> {
         const message = {
             token,
             notification: {
@@ -20,12 +31,10 @@ export class NotificationsService {
                 body
             },
         };
-
         try {
-            const response = await Firebase.messaging().send(message);
-            console.log('Successfully sent message:', response);
+            await Firebase.messaging().send(message);
         } catch (error) {
-            console.error('Error sending message:', error);
+
         }
     }
 }

@@ -5,6 +5,7 @@ import { RequestService } from './request.service';
 import { CreateRequestDto, RequestDto } from 'src/dto/request.dto';
 import { Request } from 'src/entities/request.entity';
 import { TelegramBotService } from 'src/telegram-bot/telegram-bot.service';
+import { NotificationsService } from 'src/notifications/notifications.service';
 
 const TEMPLATE_FOR_TG: string = 'НОВАЯ ЗАЯВКА НА БРОНЬ!\n';
 
@@ -13,7 +14,8 @@ const TEMPLATE_FOR_TG: string = 'НОВАЯ ЗАЯВКА НА БРОНЬ!\n';
 export class RequestController {
     constructor(
         private requestService: RequestService,
-        private telegramService: TelegramBotService
+        private telegramService: TelegramBotService,
+        private notificationService: NotificationsService,
     ) { }
 
     @ApiOperation({ summary: 'Создать заявку' })
@@ -26,6 +28,7 @@ export class RequestController {
             const savedRequest: Request = await this.requestService.create(dto);
             const messageForTg = `${TEMPLATE_FOR_TG}\nИмя: ${savedRequest.guestName}\nТелефон: ${savedRequest.guestPhone}`;
             await this.telegramService.sendMessageToTelegramChat(messageForTg);
+            await this.notificationService.generateAndSendPushNewRequest();
             return new RequestDto(savedRequest);
         } catch (error) {
             throw new HttpException(error.message, error.status || 500);

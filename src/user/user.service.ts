@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { createUserDto } from 'src/dto/user.dto';
 import { User } from '../entities/user.entity';
-import { Repository } from 'typeorm';
+import { IsNull, Not, Repository } from 'typeorm';
 
 @Injectable()
 export class UserService {
@@ -30,6 +30,18 @@ export class UserService {
     async findAll() {
         try {
             return await this.userRepository.find();
+        } catch (error) {
+            throw new Error(`Ошибка БД: ${error.message}`);
+        }
+    }
+
+    async findAllFcmTokens(): Promise<string[]> {
+        try {
+            const users: User[] = await this.userRepository.find({
+                select: { fcm_token: true },
+                where: { fcm_token: Not(IsNull()) }
+            });
+            return users.map( user => user.fcm_token );
         } catch (error) {
             throw new Error(`Ошибка БД: ${error.message}`);
         }
