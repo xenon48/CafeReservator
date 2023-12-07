@@ -6,8 +6,7 @@ import { CreateRequestDto, RequestDto } from 'src/dto/request.dto';
 import { Request } from 'src/entities/request.entity';
 import { TelegramBotService } from 'src/telegram-bot/telegram-bot.service';
 import { NotificationsService } from 'src/notifications/notifications.service';
-
-const TEMPLATE_FOR_TG: string = 'НОВАЯ ЗАЯВКА НА БРОНЬ!\n';
+import { geterateMessageToTg } from 'src/utils/utils';
 
 @Controller('request')
 @ApiTags('Requests')
@@ -26,7 +25,7 @@ export class RequestController {
         if (dto.guestPhone?.length !== 11) throw new HttpException('Длина номера телефона должна составлять 11 символов', 400)
         try {
             const savedRequest: Request = await this.requestService.create(dto);
-            const messageForTg = `${TEMPLATE_FOR_TG}\nИмя: ${savedRequest.guestName}\nТелефон: ${savedRequest.guestPhone}`;
+            const messageForTg = geterateMessageToTg(savedRequest.guestName, savedRequest.guestPhone);
             await this.telegramService.sendMessageToTelegramChat(messageForTg);
             await this.notificationService.generateAndSendPushNewRequest();
             return new RequestDto(savedRequest);

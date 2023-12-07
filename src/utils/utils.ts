@@ -6,6 +6,8 @@ enum configTimezones {
     format = 'YYYY-MM-DDTHH:mm'
 }
 
+const TEMPLATE_FOR_TG: string = '🔴 НОВАЯ ЗАЯВКА НА БРОНЬ! 🔴\n';
+
 export function castToTimezone(date: Date | string) {
     if (date) {
         return moment(date).tz(configTimezones.timeZone).format(configTimezones.format);
@@ -34,4 +36,9 @@ export function addHours(date: Date | string, shift: number) {
     if (date) {
         return moment(date).add(shift, 'hours').format(configTimezones.format);
     } else { return null }
+}
+
+export function geterateMessageToTg(name: string, phone: string): string {
+    const messageForTg = `${TEMPLATE_FOR_TG}\nИмя: ${name}\nТелефон: ${phone}`;
+    return messageForTg;
 }
