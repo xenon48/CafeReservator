@@ -10,6 +10,7 @@ import ormConfig from "./configs/orm.config";
 import { TaskModule } from "./task/task.module";
 import { RequestModule } from './request/request.module';
 import { TelegramBotModule } from './telegram-bot/telegram-bot.module';
+import { NotificationsModule } from './notifications/notifications.module';
 
 
 @Module({
@@ -22,6 +23,7 @@ import { TelegramBotModule } from './telegram-bot/telegram-bot.module';
     StatusModule,
     RequestModule,
     TelegramBotModule,
+    NotificationsModule,
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
