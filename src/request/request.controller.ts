@@ -37,12 +37,13 @@ export class RequestController {
     @ApiOperation({ summary: 'Получить все заявки' })
     @ApiResponse({ status: 200, type: [RequestDto] })
     @UseGuards(AuthGuard)
+    @ApiQuery({ name: 'actual', description: 'Получить актуальные/архивные заявки', example: true, required: true })
     @ApiQuery({ name: 'from', description: 'Дата, левая граница', example: '2023-06-28T23:00', required: false })
     @ApiQuery({ name: 'to', description: 'Дата, правая граница', example: '2023-06-30T12:30', required: false })
     @Get()
-    async getAll(@Query('from') from: string, @Query('to') to: string) {
+    async getAll(@Query('from') from: string, @Query('to') to: string, @Query('actual') actual: boolean) {
         try {
-            const requests = await this.requestService.getAll(from, to);
+            const requests = await this.requestService.getAll(from, to, actual);
             const respArr = requests.map(el => new RequestDto(el));
             return respArr;
         } catch (error) {

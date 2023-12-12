@@ -12,11 +12,11 @@ export class RequestService {
         private requestRepository: Repository<Request>
     ) { }
 
-    async getAll(from?: string, to?: string): Promise<Request[]> {
-        let whereOptions = null;
-        if (from && !to) { whereOptions = { dateStart: MoreThanOrEqual(from) } }
-        else if (!from && to) { whereOptions = { dateStart: LessThanOrEqual(to) } }
-        else if (from && to) { whereOptions = { dateStart: Between(from, to) } }
+    async getAll(from?: string, to?: string, actual: boolean = true): Promise<Request[]> {
+        let whereOptions = { actual };
+        if (from && !to) { whereOptions["dateStart"] = MoreThanOrEqual(from) }
+        else if (!from && to) { whereOptions["dateStart"] = LessThanOrEqual(to) }
+        else if (from && to) { whereOptions["dateStart"] = Between(from, to) }
         return await this.requestRepository.find({ where: whereOptions, order: { dateCreate: "ASC" } });
     }
 
