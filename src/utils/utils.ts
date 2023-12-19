@@ -39,6 +39,6 @@ export function addHours(date: Date | string, shift: number) {
 }
 
 export function geterateMessageToTg(name: string, phone: string): string {
-    const messageForTg = `${TEMPLATE_FOR_TG}\nИмя: ${name}\nТелефон: ${phone}`;
+    const messageForTg = `${TEMPLATE_FOR_TG}\nИмя: ${name}\nТелефон: +${phone}`;
     return messageForTg;
 }
